@@ -23,7 +23,7 @@ main PROC
 
 	mov esi, 0
 
-	Input:
+	Input:                                  ; User inputs 5 elements
 		mov edx, OFFSET PromptUser
 		call WriteString
 		call ReadInt
@@ -32,7 +32,7 @@ main PROC
 		cmp esi, 5
 		jl Input
 
-	Search:
+	Search:                                 ; User enters target value
 		mov edx, OFFSET prompt
 		call CrLf
 		call WriteString
@@ -42,17 +42,17 @@ main PROC
 		mov index, 0
 		mov bx, 5
 
-		ScanLoop:
+		ScanLoop:                           ; Loop to compare target value to elements
 			inc index
 			pop ax
 			cmp ax, value
-			je Output
-			jne Check
+			je Output                       ; If match, display the output strings
+			jne Check                       ; If no match, jump to Check
 
 			Check:
-				cmp index, 5
-				jle ScanLoop
-				jg Exception
+				cmp index, 5                ; Compare the incremented index to the maximum number of elements(5)
+				jle ScanLoop                ; If less than or equal to 5 (there are still elements that needs to be checked), jump to ScanLoop
+				jg Exception                ; If greater than 5(value does not exist in elements), display "-1"
 
 		Output:
 			mov edx, OFFSET String1
@@ -78,5 +78,4 @@ main PROC
 
 main ENDP
 END
-
 
