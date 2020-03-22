@@ -15,8 +15,8 @@ spacing BYTE ", ", 0
 String1 BYTE "The target value is ", 0
 String2 BYTE "and is located at index: ", 0
 NaN BYTE "-1", 0
-value WORD ?
-index WORD ?
+value DWORD ?
+index DWORD ?
 
 .code
 main PROC
@@ -27,7 +27,7 @@ main PROC
 		mov edx, OFFSET PromptUser
 		call WriteString
 		call ReadInt
-		push ax
+		push eax
 		inc esi
 		cmp esi, 5
 		jl Input
@@ -37,22 +37,22 @@ main PROC
 		call CrLf
 		call WriteString
 		call ReadInt
-		push ax
+		push eax
 		pop value
 		mov index, 0
-		mov bx, 5
+		mov ebx, 5
 
 		ScanLoop:                           ; Loop to compare target value to elements
 			inc index
-			pop ax
-			cmp ax, value
+			pop eax
+			cmp eax, value
 			je Output                       ; If match, display the output strings
 			jne Check                       ; If no match, jump to Check
 
 			Check:
 				cmp index, 5                ; Compare the incremented index to the maximum number of elements(5)
 				jle ScanLoop                ; If less than or equal to 5 (there are still elements that needs to be checked), jump to ScanLoop
-				jg Exception                ; If greater than 5(value does not exist in elements), display "-1"
+				jg Exception                ; If greater than 5(value does not exist in elements), display '-1'
 
 		Output:
 			mov edx, OFFSET String1
@@ -63,9 +63,9 @@ main PROC
 			call WriteString
 			mov edx, OFFSET String2
 			call WriteString
-			mov ax, 5
-			sub ax, index
-			push ax
+			mov eax, 5
+			sub eax, index
+			push eax
 			pop index
 			call WriteInt
 			INVOKE ExitProcess, 0
@@ -77,5 +77,6 @@ main PROC
 	INVOKE ExitProcess, 0
 
 main ENDP
+
 END
 

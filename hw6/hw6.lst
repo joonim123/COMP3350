@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.16.27032.1	    03/20/20 23:43:07
+Microsoft (R) Macro Assembler Version 14.16.27032.1	    03/22/20 09:53:52
 Homework #						     Page 1 - 1
 
 
@@ -54,84 +54,78 @@ Question3.asm(7) : warning A4011:multiple .MODEL directives found : .MODEL ignor
 	   64 65 78 3A 20
 	   00
  00000060 2D 31 00		NaN BYTE "-1", 0
- 00000063 0000			value WORD ?
- 00000065 0000			index WORD ?
+ 00000063 00000000		value DWORD ?
+ 00000067 00000000		index DWORD ?
 
  00000000			.code
  00000000			main PROC
 
  00000000  BE 00000000			mov esi, 0
 
- 00000005				Input:
+ 00000005				Input:                                  ; User inputs 5 elements
  00000005  BA 00000000 R			mov edx, OFFSET PromptUser
  0000000A  E8 00000000 E			call WriteString
  0000000F  E8 00000000 E			call ReadInt
- 00000014  66| 50				push ax
- 00000016  46					inc esi
- 00000017  83 FE 05				cmp esi, 5
- 0000001A  7C E9				jl Input
+ 00000014  50					push eax
+ 00000015  46					inc esi
+ 00000016  83 FE 05				cmp esi, 5
+ 00000019  7C EA				jl Input
 
- 0000001C				Search:
- 0000001C  BA 00000017 R			mov edx, OFFSET prompt
- 00000021  E8 00000000 E			call CrLf
- 00000026  E8 00000000 E			call WriteString
- 0000002B  E8 00000000 E			call ReadInt
- 00000030  66| 50				push ax
- 00000032  66| 8F 05				pop value
-	   00000063 R
- 00000039  66| C7 05				mov index, 0
-	   00000065 R
-	   0000
- 00000042  66| BB 0005				mov bx, 5
+ 0000001B				Search:                                 ; User enters target value
+ 0000001B  BA 00000017 R			mov edx, OFFSET prompt
+ 00000020  E8 00000000 E			call CrLf
+ 00000025  E8 00000000 E			call WriteString
+ 0000002A  E8 00000000 E			call ReadInt
+ 0000002F  50					push eax
+ 00000030  8F 05 00000063 R			pop value
+ 00000036  C7 05 00000067 R			mov index, 0
+	   00000000
+ 00000040  BB 00000005				mov ebx, 5
 
- 00000046					ScanLoop:
- 00000046  66| FF 05					inc index
-	   00000065 R
- 0000004D  66| 58					pop ax
- 0000004F  66| 3B 05					cmp ax, value
-	   00000063 R
- 00000056  74 0E					je Output
- 00000058  75 00					jne Check
+ 00000045					ScanLoop:                           ; Loop to compare target value to elements
+ 00000045  FF 05 00000067 R				inc index
+ 0000004B  58						pop eax
+ 0000004C  3B 05 00000063 R				cmp eax, value
+ 00000052  74 0D					je Output                       ; If match, display the output strings
+ 00000054  75 00					jne Check                       ; If no match, jump to Check
 
- 0000005A						Check:
- 0000005A  66| 83 3D						cmp index, 5
-	   00000065 R 05
- 00000062  7E E2						jle ScanLoop
- 00000064  7F 48						jg Exception
+ 00000056						Check:
+ 00000056  83 3D 00000067 R					cmp index, 5                ; Compare the incremented index to the maximum number of elements(5)
+	   05
+ 0000005D  7E E6						jle ScanLoop                ; If less than or equal to 5 (there are still elements that needs to be checked), jump to ScanLoop
+ 0000005F  7F 46						jg Exception                ; If greater than 5(value does not exist in elements), display '-1'
 
- 00000066					Output:
- 00000066  BA 00000031 R				mov edx, OFFSET String1
- 0000006B  E8 00000000 E				call WriteString
- 00000070  BA 00000063 R				mov edx, OFFSET value
- 00000075  E8 00000000 E				call WriteInt
- 0000007A  BA 0000002E R				mov edx, OFFSET spacing
- 0000007F  E8 00000000 E				call WriteString
- 00000084  BA 00000046 R				mov edx, OFFSET String2
- 00000089  E8 00000000 E				call WriteString
- 0000008E  66| B8 0005					mov ax, 5
- 00000092  66| 2B 05					sub ax, index
-	   00000065 R
- 00000099  66| 50					push ax
- 0000009B  66| 8F 05					pop index
-	   00000065 R
- 000000A2  E8 00000000 E				call WriteInt
+ 00000061					Output:
+ 00000061  BA 00000031 R				mov edx, OFFSET String1
+ 00000066  E8 00000000 E				call WriteString
+ 0000006B  BA 00000063 R				mov edx, OFFSET value
+ 00000070  E8 00000000 E				call WriteInt
+ 00000075  BA 0000002E R				mov edx, OFFSET spacing
+ 0000007A  E8 00000000 E				call WriteString
+ 0000007F  BA 00000046 R				mov edx, OFFSET String2
+ 00000084  E8 00000000 E				call WriteString
+ 00000089  B8 00000005					mov eax, 5
+ 0000008E  2B 05 00000067 R				sub eax, index
+ 00000094  50						push eax
+ 00000095  8F 05 00000067 R				pop index
+ 0000009B  E8 00000000 E				call WriteInt
 							INVOKE ExitProcess, 0
- 000000A7  6A 00	   *	    push   +000000000h
- 000000A9  E8 00000000 E   *	    call   ExitProcess
+ 000000A0  6A 00	   *	    push   +000000000h
+ 000000A2  E8 00000000 E   *	    call   ExitProcess
 
- 000000AE					Exception:
- 000000AE  BA 00000060 R				mov edx, OFFSET NaN
- 000000B3  E8 00000000 E				call WriteString
+ 000000A7					Exception:
+ 000000A7  BA 00000060 R				mov edx, OFFSET NaN
+ 000000AC  E8 00000000 E				call WriteString
 
 					INVOKE ExitProcess, 0
- 000000B8  6A 00	   *	    push   +000000000h
- 000000BA  E8 00000000 E   *	    call   ExitProcess
+ 000000B1  6A 00	   *	    push   +000000000h
+ 000000B3  E8 00000000 E   *	    call   ExitProcess
 
- 000000BF			main ENDP
+ 000000B8			main ENDP
+
 				END
 
-
-Microsoft (R) Macro Assembler Version 14.16.27032.1	    03/20/20 23:43:07
+Microsoft (R) Macro Assembler Version 14.16.27032.1	    03/22/20 09:53:52
 Homework #						     Symbols 2 - 1
 
 
@@ -225,8 +219,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000067 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 000000BF Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 0000006B Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 000000B8 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -333,13 +327,13 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 000000BF Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 000000B8 Public STDCALL
   Input  . . . . . . . . . . . .	L Near	 00000005 _TEXT	
-  Search . . . . . . . . . . . .	L Near	 0000001C _TEXT	
-  ScanLoop . . . . . . . . . . .	L Near	 00000046 _TEXT	
-  Check  . . . . . . . . . . . .	L Near	 0000005A _TEXT	
-  Output . . . . . . . . . . . .	L Near	 00000066 _TEXT	
-  Exception  . . . . . . . . . .	L Near	 000000AE _TEXT	
+  Search . . . . . . . . . . . .	L Near	 0000001B _TEXT	
+  ScanLoop . . . . . . . . . . .	L Near	 00000045 _TEXT	
+  Check  . . . . . . . . . . . .	L Near	 00000056 _TEXT	
+  Output . . . . . . . . . . . .	L Near	 00000061 _TEXT	
+  Exception  . . . . . . . . . .	L Near	 000000A7 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -569,7 +563,7 @@ cyan . . . . . . . . . . . . . .	Number	 00000003h
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
-index  . . . . . . . . . . . . .	Word	 00000065 _DATA	
+index  . . . . . . . . . . . . .	DWord	 00000067 _DATA	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
@@ -580,7 +574,7 @@ magenta  . . . . . . . . . . . .	Number	 00000005h
 prompt . . . . . . . . . . . . .	Byte	 00000017 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
 spacing  . . . . . . . . . . . .	Byte	 0000002E _DATA	
-value  . . . . . . . . . . . . .	Word	 00000063 _DATA	
+value  . . . . . . . . . . . . .	DWord	 00000063 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
