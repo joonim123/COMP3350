@@ -15,8 +15,10 @@ Output1Str2 BYTE "Value: ", 0
 Output1Str3 BYTE "Index: ", 0
 Output2Str BYTE "No odd integer found.", 0
 num WORD 5 DUP (?)						; Declare 5 uninitialized values
-index DWORD 0
+index1 DWORD 0
+index2 DWORD 0
 value DWORD ?
+pass DWORD ?
 
 
 .code
@@ -35,21 +37,31 @@ main PROC
 	mov esi, 0							; Initialize counter
 
 	Search:
-		inc index
+		inc index1
 		pop value
 		mov eax, value
         xor edx, edx
         mov ebx, eax
         mov ecx, 2
         div ecx 
-		cmp edx, 1
-		je Output1
-		jne Check
+		.IF edx == 1
+			mov ebx, index1
+			mov index2, ebx
+			mov pass, 1
+			jmp Check
+		.ELSE
+			jmp Check
+		.ENDIF
 
 		Check:                          ; Checks if all 5 elements in array has been checked
-			cmp index, 5
+			cmp index1, 4
 			jle Search
-			jg Output2
+			jg Path
+	
+	Path:
+		cmp pass, 0
+		je Output2
+		jne Output1
 
 	Output1:
         mov edx, OFFSET Output1Str1 ; "Odd integer found."
@@ -65,8 +77,8 @@ main PROC
         mov edx, OFFSET Output1Str3 ; "Index: "
         call WriteString
 		mov eax, 5
-		sub eax, index
-        mov edx, OFFSET index       ; index
+		sub eax, index2
+        mov edx, OFFSET index2      ; index
         call WriteInt
         INVOKE ExitProcess, 0
 
