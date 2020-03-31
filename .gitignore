@@ -348,3 +348,10 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# Ignore local listing files, solutions, project filters, debug executables
+hw7/MASM
+*.lst
+*.sln
+*.vcxproj
+*.vcxproj.filters
